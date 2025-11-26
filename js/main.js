@@ -1,57 +1,64 @@
 class Player {
     constructor() {
-        this.width = 30;
-        this.height = 30;
+        this.width = 80;
+        this.height = 80;
         this.positionX = 0;
         this.positionY = 0;
 
-        this.updateUI()
+        this.boardHeight = 600; 
+        this.boardWidth = 800;  
 
-     }
+        this.playerElm = document.getElementById("player");
+
+        this.updateUI();
+    }
+
     updateUI() {
-        this.playerElm = document.getElementById("player")
         this.playerElm.style.width = this.width + "px";
         this.playerElm.style.height = this.height + "px";
         this.playerElm.style.left = this.positionX + "px";
-        this.playerElm.style.right = this.positionY + "px";
+        this.playerElm.style.top = this.positionY + "px";   
     }
 
     moveLeft() {
         if (this.positionX > 0) {
-            this.positionX--;
-            this.updateUI()
+            this.positionX -= 5;
+            this.updateUI();
         }
     }
+
     moveRigth() {
-        if (this.positionX < 800 - this.width)
-             {
-            this.positionX++;
-            this.updateUI()
+        if (this.positionX < this.boardWidth - this.width) {
+            this.positionX += 5;
+            this.updateUI();
         }
-        
     }
+
     moveUp() {
-        this.positionY += 1;         
-    this.playerElm.style.bottom = this.positionY + "px";
-        console.log("moveUp")
+        if (this.positionY > 0) {
+            this.positionY -= 5;
+            this.updateUI();
+        }
     }
+
     moveDown() {
-        this.positionY -= 1;         
-    this.playerElm.style.bottom = this.positionY + "px";
-        console.log("moveDown")
+        if (this.positionY < this.boardHeight - this.height) {
+            this.positionY += 5;
+            this.updateUI();
+        }
     }
 }
 
-const player = new Player()
+const player = new Player();
 
 document.addEventListener('keydown', (e) => {
     if (e.code === 'ArrowUp') {
-        player.moveUp()
+        player.moveUp();
     } else if (e.code === 'ArrowDown') {
-        player.moveDown()
+        player.moveDown();
     } else if (e.code === 'ArrowLeft') {
-        player.moveLeft()
+        player.moveLeft();
     } else if (e.code === 'ArrowRight') {
-        player.moveRigth()
+        player.moveRigth();
     }
 });
