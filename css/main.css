@@ -27,6 +27,15 @@ body {
     object-fit: contain;
 }
 
+#trace {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+#player { z-index: 2; }
+
 .enemy {
     background-image: url(../images/325d064aa6da1bb6284482c1ccfdd2fe.jpg);
     position: absolute;

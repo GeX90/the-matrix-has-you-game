@@ -2,15 +2,28 @@ class Player {
     constructor() {
         this.width = 50;
         this.height = 50;
-        this.positionX = 0;
-        this.positionY = 0;
+        this.positionX = 350;
+        this.positionY = 550;
 
         this.boardHeight = 600;
         this.boardWidth = 800;
 
         this.playerElm = document.getElementById("player");
 
+        //Estela
+        this.trace = document.getElementById("trace");
+
+        this.line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    this.line.setAttribute("stroke", "lime");
+    this.line.setAttribute("stroke-width", "3");
+    this.line.setAttribute("fill", "none");
+    this.trace.appendChild(this.line);
+
+    this.lastPoint = { x: null, y: null };
+    this.minDistance = 4;
+
         this.updateUI();
+        this.addTrailPoint(true);
     }
 
     updateUI() {
@@ -18,7 +31,34 @@ class Player {
         this.playerElm.style.height = this.height + "px";
         this.playerElm.style.left = this.positionX + "px";
         this.playerElm.style.top = this.positionY + "px";
+
+        this.addTrailPoint();
     }
+
+    addTrailPoint(force = false) {
+    const cx = this.positionX + this.width / 2;
+    const cy = this.positionY + this.height / 2;
+
+    if (force || this.lastPoint.x === null) {
+      
+      const p = this.trace.createSVGPoint();
+      p.x = cx; p.y = cy;
+      this.line.points.appendItem(p);
+      this.lastPoint = { x: cx, y: cy };
+      return;
+    }
+
+    const dx = cx - this.lastPoint.x;
+    const dy = cy - this.lastPoint.y;
+    const distSq = dx * dx + dy * dy;
+
+    if (distSq >= this.minDistance * this.minDistance) {
+      const p = this.trace.createSVGPoint();
+      p.x = cx; p.y = cy;
+      this.line.points.appendItem(p);
+      this.lastPoint = { x: cx, y: cy };
+    }
+  }
 
     moveLeft() {
         if (this.positionX > 0) {
@@ -45,48 +85,59 @@ class Player {
         if (this.positionY < this.boardHeight - this.height) {
             this.positionY += 5;
             this.updateUI();
-        }
+        } 
     }
 }
 
 
 class Obstacle {
     constructor() {
-        this.width = 40
-        this.height = 40
-        this.positionX = Math.floor(Math.random() * (760 - this.width + 1));
-        this.positionY = 560
-        this.obstacleEnemy = null
-        
-        this.createEnemy()
-        this.updateUI()
-        
+        this.width = 40;
+        this.height = 40;
+
+        // Empiezan arriba
+        this.positionX = Math.floor(Math.random() * (800 - this.width));
+        this.positionY = 0;
+
+        // Velocidades aleatorias
+        this.speedX = Math.random() * 4 - 2; // rebote lateral
+        this.speedY = Math.random() * 3 + 1; // cae hacia abajo
+
+        this.createEnemy();
+        this.updateUI();
     }
 
     createEnemy() {
-        this.obstacleEnemy = document.createElement("div")
-
-        this.obstacleEnemy.className = "enemy"
-
-        const obstacleElement = document.getElementById("board")
-        obstacleElement.appendChild(this.obstacleEnemy)
+        this.obstacleEnemy = document.createElement("div");
+        this.obstacleEnemy.className = "enemy";
+        document.getElementById("board").appendChild(this.obstacleEnemy);
     }
 
     updateUI() {
-        this.obstacleEnemy.style.width = this.width + "px"
-        this.obstacleEnemy.style.height = this.height + "px"
-        this.obstacleEnemy.style.left = this.positionX + "px"
-        this.obstacleEnemy.style.bottom = this.positionY + "px"
-
+        this.obstacleEnemy.style.width = this.width + "px";
+        this.obstacleEnemy.style.height = this.height + "px";
+        this.obstacleEnemy.style.left = this.positionX + "px";
+        this.obstacleEnemy.style.top = this.positionY + "px";
     }
 
-   
+    move() {
+        this.positionX += this.speedX;
+        this.positionY += this.speedY;
 
-    moveDown() {
-        this.positionY--;
-        this.updateUI()
+        // Rebote horizontal
+        if (this.positionX <= 0 || this.positionX >= 800 - this.width) {
+            this.speedX *= -1;
+        }
+
+        // Rebote vertical
+        if (this.positionY <= 0 || this.positionY >= 600 - this.height) {
+            this.speedY *= -1;
+        }
+
+        this.updateUI();
     }
 }
+
 
 
 
@@ -97,11 +148,11 @@ const obstacleEnemy = [];
 setInterval(() => {
     const newEnemy = new Obstacle()
     obstacleEnemy.push(newEnemy)
-}, 3000)
+}, 5000)
 
 setInterval(() => {
     obstacleEnemy.forEach((element, i, arr) => {
-        element.moveDown()
+        element.move()
     })
 }, 50)
 
