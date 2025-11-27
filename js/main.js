@@ -65,25 +65,72 @@ class Player {
         }
     }
 
+    closeTrail() {
+        if (!this.line) return;
+
+        const pointsArray = [];
+        for (let i = 0; i < this.line.points.numberOfItems; i++) {
+            const pt = this.line.points.getItem(i);
+            pointsArray.push({ x: pt.x, y: pt.y });
+        }
+
+        // Conectar la línea con los bordes del board
+        const firstPoint = pointsArray[0];
+        const lastPoint = pointsArray[pointsArray.length - 1];
+
+        // Determinar el borde más cercano y cerrar hacia allí
+        let endX = lastPoint.x;
+        let endY = lastPoint.y;
+
+        if (lastPoint.x <= 0) endX = 0;
+        else if (lastPoint.x >= this.boardWidth) endX = this.boardWidth;
+        if (lastPoint.y <= 0) endY = 0;
+        else if (lastPoint.y >= this.boardHeight) endY = this.boardHeight;
+
+        pointsArray.push({ x: endX, y: endY });
+        pointsArray.push({ x: firstPoint.x, y: firstPoint.y }); // cerrar polígono
+
+        // Crear polígono
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("stroke", "lime");
+        polygon.setAttribute("stroke-width", "3");
+        polygon.setAttribute("fill", "rgba(0,255,0,0.2)");
+        polygon.setAttribute(
+            "points",
+            pointsArray.map(p => `${p.x},${p.y}`).join(" ")
+        );
+
+        this.trace.appendChild(polygon);
+
+        // Eliminar la línea y reiniciar
+        this.line.remove();
+        this.line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        this.line.setAttribute("stroke", "lime");
+        this.line.setAttribute("stroke-width", "3");
+        this.line.setAttribute("fill", "none");
+        this.trace.appendChild(this.line);
+        this.lastPoint = { x: null, y: null };
+    }
+
     moveLeft() {
-    if (this.positionX > this.minX) this.positionX -= 5;
-    this.updateUI();
-}
-
-moveRight() {
-    if (this.positionX < this.maxX) this.positionX += 5;
-    this.updateUI();
-}
-
-moveUp() {
-    if (this.positionY > this.minY) this.positionY -= 5;
-    this.updateUI();
-}
-
-moveDown() {
-    if (this.positionY < this.maxY) this.positionY += 5;
-    this.updateUI();
-
+        this.positionX = Math.max(this.minX, this.positionX - 5);
+        this.updateUI();
+        if (this.positionX === this.minX) this.closeTrail();
+    }
+    moveRight() {
+        this.positionX = Math.min(this.maxX, this.positionX + 5);
+        this.updateUI();
+        if (this.positionX === this.maxX) this.closeTrail();
+    }
+    moveUp() {
+        this.positionY = Math.max(this.minY, this.positionY - 5);
+        this.updateUI();
+        if (this.positionY === this.minY) this.closeTrail();
+    }
+    moveDown() {
+        this.positionY = Math.min(this.maxY, this.positionY + 5);
+        this.updateUI();
+        if (this.positionY === this.maxY) this.closeTrail();
     }
 }
 
