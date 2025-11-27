@@ -5,8 +5,8 @@ class Player {
         this.positionX = 0;
         this.positionY = 0;
 
-        this.boardHeight = 600; 
-        this.boardWidth = 800;  
+        this.boardHeight = 600;
+        this.boardWidth = 800;
 
         this.playerElm = document.getElementById("player");
 
@@ -17,7 +17,7 @@ class Player {
         this.playerElm.style.width = this.width + "px";
         this.playerElm.style.height = this.height + "px";
         this.playerElm.style.left = this.positionX + "px";
-        this.playerElm.style.top = this.positionY + "px";   
+        this.playerElm.style.top = this.positionY + "px";
     }
 
     moveLeft() {
@@ -49,7 +49,61 @@ class Player {
     }
 }
 
+
+class Obstacle {
+    constructor() {
+        this.width = 40
+        this.height = 40
+        this.positionX = 10
+        this.positionY = 560
+        this.obstacleEnemy = null
+        
+        this.createEnemy()
+        this.updateUI()
+        
+    }
+
+    createEnemy() {
+        this.obstacleEnemy = document.createElement("div")
+
+        this.obstacleEnemy.className = "enemy"
+
+        const obstacleElement = document.getElementById("board")
+        obstacleElement.appendChild(this.obstacleEnemy)
+    }
+
+    updateUI() {
+        this.obstacleEnemy.style.width = this.width + "px"
+        this.obstacleEnemy.style.height = this.height + "px"
+        this.obstacleEnemy.style.left = this.positionX + "px"
+        this.obstacleEnemy.style.bottom = this.positionY + "px"
+
+    }
+
+   
+
+    moveDown() {
+        this.positionY--;
+        this.updateUI()
+    }
+}
+
+
+
+
 const player = new Player();
+const obstacleEnemy = [];
+
+setInterval(() => {
+    const newEnemy = new Obstacle()
+    obstacleEnemy.push(newEnemy)
+}, 3000)
+
+setInterval(() => {
+    obstacleEnemy.forEach((element, i, arr) => {
+        element.moveDown()
+    })
+}, 100)
 
 document.addEventListener('keydown', (e) => {
     if (e.code === 'ArrowUp') {
