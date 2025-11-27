@@ -54,7 +54,7 @@ class Obstacle {
     constructor() {
         this.width = 40
         this.height = 40
-        this.positionX = 10
+        this.positionX = Math.floor(Math.random() * (760 - this.width + 1));
         this.positionY = 560
         this.obstacleEnemy = null
         
@@ -103,7 +103,7 @@ setInterval(() => {
     obstacleEnemy.forEach((element, i, arr) => {
         element.moveDown()
     })
-}, 100)
+}, 50)
 
 document.addEventListener('keydown', (e) => {
     if (e.code === 'ArrowUp') {
