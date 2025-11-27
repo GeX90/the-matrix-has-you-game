@@ -3,7 +3,12 @@ class Player {
         this.width = 50;
         this.height = 50;
         this.positionX = 350;
-        this.positionY = 550;
+        this.positionY = 575;
+
+        this.minX = -this.width / 2;
+        this.maxX = 800 - this.width / 2;
+        this.minY = -this.height / 2;
+        this.maxY = 600 - this.height / 2;
 
         this.boardHeight = 600;
         this.boardWidth = 800;
@@ -14,13 +19,13 @@ class Player {
         this.trace = document.getElementById("trace");
 
         this.line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-    this.line.setAttribute("stroke", "lime");
-    this.line.setAttribute("stroke-width", "3");
-    this.line.setAttribute("fill", "none");
-    this.trace.appendChild(this.line);
+        this.line.setAttribute("stroke", "lime");
+        this.line.setAttribute("stroke-width", "3");
+        this.line.setAttribute("fill", "none");
+        this.trace.appendChild(this.line);
 
-    this.lastPoint = { x: null, y: null };
-    this.minDistance = 4;
+        this.lastPoint = { x: null, y: null };
+        this.minDistance = 4;
 
         this.updateUI();
         this.addTrailPoint(true);
@@ -28,64 +33,57 @@ class Player {
 
     updateUI() {
         this.playerElm.style.width = this.width + "px";
-        this.playerElm.style.height = this.height + "px";
-        this.playerElm.style.left = this.positionX + "px";
-        this.playerElm.style.top = this.positionY + "px";
+    this.playerElm.style.height = this.height + "px";
+    this.playerElm.style.left = this.positionX + "px";
+    this.playerElm.style.top = this.positionY + "px";
 
         this.addTrailPoint();
     }
 
     addTrailPoint(force = false) {
-    const cx = this.positionX + this.width / 2;
-    const cy = this.positionY + this.height / 2;
+        const cx = this.positionX + this.width / 2;
+        const cy = this.positionY + this.height / 2;
 
-    if (force || this.lastPoint.x === null) {
-      
-      const p = this.trace.createSVGPoint();
-      p.x = cx; p.y = cy;
-      this.line.points.appendItem(p);
-      this.lastPoint = { x: cx, y: cy };
-      return;
+        if (force || this.lastPoint.x === null) {
+
+            const p = this.trace.createSVGPoint();
+            p.x = cx; p.y = cy;
+            this.line.points.appendItem(p);
+            this.lastPoint = { x: cx, y: cy };
+            return;
+        }
+
+        const dx = cx - this.lastPoint.x;
+        const dy = cy - this.lastPoint.y;
+        const distSq = dx * dx + dy * dy;
+
+        if (distSq >= this.minDistance * this.minDistance) {
+            const p = this.trace.createSVGPoint();
+            p.x = cx; p.y = cy;
+            this.line.points.appendItem(p);
+            this.lastPoint = { x: cx, y: cy };
+        }
     }
-
-    const dx = cx - this.lastPoint.x;
-    const dy = cy - this.lastPoint.y;
-    const distSq = dx * dx + dy * dy;
-
-    if (distSq >= this.minDistance * this.minDistance) {
-      const p = this.trace.createSVGPoint();
-      p.x = cx; p.y = cy;
-      this.line.points.appendItem(p);
-      this.lastPoint = { x: cx, y: cy };
-    }
-  }
 
     moveLeft() {
-        if (this.positionX > 0) {
-            this.positionX -= 5;
-            this.updateUI();
-        }
-    }
+    if (this.positionX > this.minX) this.positionX -= 5;
+    this.updateUI();
+}
 
-    moveRigth() {
-        if (this.positionX < this.boardWidth - this.width) {
-            this.positionX += 5;
-            this.updateUI();
-        }
-    }
+moveRight() {
+    if (this.positionX < this.maxX) this.positionX += 5;
+    this.updateUI();
+}
 
-    moveUp() {
-        if (this.positionY > 0) {
-            this.positionY -= 5;
-            this.updateUI();
-        }
-    }
+moveUp() {
+    if (this.positionY > this.minY) this.positionY -= 5;
+    this.updateUI();
+}
 
-    moveDown() {
-        if (this.positionY < this.boardHeight - this.height) {
-            this.positionY += 5;
-            this.updateUI();
-        } 
+moveDown() {
+    if (this.positionY < this.maxY) this.positionY += 5;
+    this.updateUI();
+
     }
 }
 
@@ -148,7 +146,7 @@ const obstacleEnemy = [];
 setInterval(() => {
     const newEnemy = new Obstacle()
     obstacleEnemy.push(newEnemy)
-}, 5000)
+}, 10000)
 
 setInterval(() => {
     obstacleEnemy.forEach((element, i, arr) => {
@@ -164,6 +162,6 @@ document.addEventListener('keydown', (e) => {
     } else if (e.code === 'ArrowLeft') {
         player.moveLeft();
     } else if (e.code === 'ArrowRight') {
-        player.moveRigth();
+        player.moveRight();
     }
 });
