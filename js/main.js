@@ -284,6 +284,7 @@ document.addEventListener('keydown', (e) => {
 
 const bgMusic = document.getElementById("bgMusic");
 const toggleBtn = document.getElementById("toggleMusic");
+const engingMusic = document.getElementById("endingMusic")
 
 let musicOn = false;
 
@@ -310,15 +311,9 @@ const scoreElement = document.getElementById("score");
 //gameOver
 
 function gameOver() {
-    // Mostrar pantalla
-    document.getElementById("gameOver").style.display = "block";
-
-    // Detener enemigos
-    clearInterval(enemyInterval);
-
-    // Opcional: desactivar controles
-    document.removeEventListener('keydown', playerKeyHandler);
+    window.location.href = "gameover.html";
 }
+
 
 //colisionPlayer
 function isColliding(enemy) {

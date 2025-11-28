@@ -1,17 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Over</title>
+    <style>
+        body {
+            background: url(./images/smile.jpg);
+            background-size: cover;
+            color: chartreuse;
+            font-size: 50px;
+            font-family: Arial;
+            text-align: center;
+            padding-top: 150px;
+        }
 
-    <link rel="stylesheet" href="./css/main.css">
+        a {
+            display: block;
+            margin-top: 40px;
+            font-size: 30px;
+            color: chartreuse;
+        }
+    </style>
 </head>
-<body id="page-gameover">
+<body>
 
-    <h1>Game Over</h1>
-   
-    <a href="./index.html">Play Again</a>
+    <h5>“¿Oye eso señor Anderson? Es el sonido de lo inevitable.”</h5>
+
+    <a href="index.html">Reintentar</a>
+
+    <audio id="gameover-music" autoplay loop>
+        <source src="./audio/oye_eso_señor.mp3" type="audio/mpeg">
+        
+    </audio>
 
 </body>
 </html>
