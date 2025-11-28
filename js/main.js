@@ -66,51 +66,107 @@ class Player {
     }
 
     closeTrail() {
-        if (!this.line) return;
+    if (!this.line) return;
 
-        const pointsArray = [];
-        for (let i = 0; i < this.line.points.numberOfItems; i++) {
-            const pt = this.line.points.getItem(i);
-            pointsArray.push({ x: pt.x, y: pt.y });
-        }
-
-        // Conectar la línea con los bordes del board
-        const firstPoint = pointsArray[0];
-        const lastPoint = pointsArray[pointsArray.length - 1];
-
-        // Determinar el borde más cercano y cerrar hacia allí
-        let endX = lastPoint.x;
-        let endY = lastPoint.y;
-
-        if (lastPoint.x <= 0) endX = 0;
-        else if (lastPoint.x >= this.boardWidth) endX = this.boardWidth;
-        if (lastPoint.y <= 0) endY = 0;
-        else if (lastPoint.y >= this.boardHeight) endY = this.boardHeight;
-
-        pointsArray.push({ x: endX, y: endY });
-        pointsArray.push({ x: firstPoint.x, y: firstPoint.y }); // cerrar polígono
-
-        // Crear polígono
-        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-        polygon.setAttribute("stroke", "lime");
-        polygon.setAttribute("stroke-width", "3");
-        polygon.setAttribute("fill", "rgba(0,255,0,0.2)");
-        polygon.setAttribute(
-            "points",
-            pointsArray.map(p => `${p.x},${p.y}`).join(" ")
-        );
-
-        this.trace.appendChild(polygon);
-
-        // Eliminar la línea y reiniciar
-        this.line.remove();
-        this.line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-        this.line.setAttribute("stroke", "lime");
-        this.line.setAttribute("stroke-width", "3");
-        this.line.setAttribute("fill", "none");
-        this.trace.appendChild(this.line);
-        this.lastPoint = { x: null, y: null };
+    const pointsArray = [];
+    for (let i = 0; i < this.line.points.numberOfItems; i++) {
+        const pt = this.line.points.getItem(i);
+        pointsArray.push({ x: pt.x, y: pt.y });
     }
+
+    const first = pointsArray[0];
+    const last = pointsArray[pointsArray.length - 1];
+
+    // ¿Qué borde tocamos?
+    let touchedEdge = null;
+    if (last.x <= 0) touchedEdge = "left";
+    else if (last.x >= this.boardWidth) touchedEdge = "right";
+    else if (last.y <= 0) touchedEdge = "top";
+    else if (last.y >= this.boardHeight) touchedEdge = "bottom";
+
+    // Añadir el punto del borde correcto
+    const add = (x, y) => pointsArray.push({ x, y });
+
+    // Seguir borde hasta coincidir con el primer punto
+    switch (touchedEdge) {
+        case "left":
+            add(0, last.y);
+            add(0, first.y);
+            break;
+
+        case "right":
+            add(this.boardWidth, last.y);
+            add(this.boardWidth, first.y);
+            break;
+
+        case "top":
+            add(last.x, 0);
+            add(first.x, 0);
+            break;
+
+        case "bottom":
+            add(last.x, this.boardHeight);
+            add(first.x, this.boardHeight);
+            break;
+    }
+
+    // Cerrar finalmente al primer punto
+    add(first.x, first.y);
+
+    // Crear polígono
+    const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    polygon.setAttribute("stroke", "lime");
+    polygon.setAttribute("stroke-width", "3");
+    polygon.setAttribute("fill", "rgba(0,255,0,0.35)");
+    polygon.setAttribute("points", pointsArray.map(p => `${p.x},${p.y}`).join(" "));
+
+    this.trace.appendChild(polygon);
+    this.checkEnemiesInside(pointsArray);
+
+    // Resetear línea
+    this.line.remove();
+    this.line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    this.line.setAttribute("stroke", "lime");
+    this.line.setAttribute("stroke-width", "3");
+    this.line.setAttribute("fill", "none");
+    this.trace.appendChild(this.line);
+
+    this.lastPoint = { x: null, y: null };
+}
+
+isPointInsidePolygon(px, py, polygonPoints) {
+    let inside = false;
+
+    for (let i = 0, j = polygonPoints.length - 1; i < polygonPoints.length; j = i++) {
+        const xi = polygonPoints[i].x, yi = polygonPoints[i].y;
+        const xj = polygonPoints[j].x, yj = polygonPoints[j].y;
+
+        const intersect = ((yi > py) !== (yj > py)) &&
+                          (px < (xj - xi) * (py - yi) / (yj - yi + 0.00001) + xi);
+        if (intersect) inside = !inside;
+    }
+
+    return inside;
+}
+
+checkEnemiesInside(polygonPoints) {
+    obstacleEnemy.forEach((enemy, index) => {
+
+        // Centro del enemigo
+        const ex = enemy.positionX + enemy.width / 2;
+        const ey = enemy.positionY + enemy.height / 2;
+
+        if (this.isPointInsidePolygon(ex, ey, polygonPoints)) {
+            // Eliminar del DOM
+            enemy.obstacleEnemy.remove();
+
+            // Eliminar del array
+            obstacleEnemy.splice(index, 1);
+        }
+    });
+}
+
+
 
     moveLeft() {
         this.positionX = Math.max(this.minX, this.positionX - 5);
