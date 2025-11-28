@@ -85,11 +85,49 @@ body h1 {
     color: lime;
 }
 
-#enter {
-    position: absolute;  
-    top: 100%;
-    left: 50%;
-    transform: translate(-50%, 20%);
+.start-screen {
+    background-image: url(../images/backgroundstart.jpg);
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;   
+    align-items: center;       
+    text-align: center;
     color: chartreuse;
-
+    font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Título */
+#title {
+    position: absolute;
+    top: 250px;
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+/* Subtítulo */
+#subtitle {
+    font-size: 30px;
+    width: 80%;
+    max-width: 700px;
+    margin-bottom: 40px;
+}
+
+/* Botón */
+#enter {
+    font-size: 40px;
+    color: chartreuse;
+    text-decoration: none;
+    border: 2px solid chartreuse;
+    padding: 10px 20px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+#enter:hover {
+    background-color: chartreuse;
+    color: black;
+}
+
