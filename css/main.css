@@ -84,3 +84,12 @@ body h1 {
     font-weight: bold;
     color: lime;
 }
+
+#enter {
+    position: absolute;  
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, 20%);
+    color: chartreuse;
+
+}
