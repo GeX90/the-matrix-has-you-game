@@ -122,6 +122,7 @@ class Player {
 
     this.trace.appendChild(polygon);
     this.checkEnemiesInside(pointsArray);
+    setTimeout(() => polygon.remove(), 200);
 
     // Resetear línea
     this.line.remove();
@@ -163,6 +164,8 @@ checkEnemiesInside(polygonPoints) {
             // Eliminar del array
             obstacleEnemy.splice(index, 1);
         }
+
+        
     });
 }
 
@@ -266,5 +269,28 @@ document.addEventListener('keydown', (e) => {
         player.moveLeft();
     } else if (e.code === 'ArrowRight') {
         player.moveRight();
+    }
+});
+
+
+
+//Música
+
+const bgMusic = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("toggleMusic");
+
+let musicOn = false;
+
+// Activar al primer click para evitar restricciones de autoplay
+toggleBtn.addEventListener("click", () => {
+    musicOn = !musicOn;
+
+    if (musicOn) {
+        bgMusic.volume = 0.4;
+        bgMusic.play();
+        toggleBtn.textContent = "🔇 Silenciar";
+    } else {
+        bgMusic.pause();
+        toggleBtn.textContent = "🔊 Música";
     }
 });
