@@ -67,14 +67,20 @@ body h1 {
 
 }
 
-#page-gameover {
-    text-align: center;
-    background-color: darkcyan;
-}
+
 
 #toggleMusic {
     padding: 8px 16px;
     font-size: 16px;
     cursor: pointer;
     border-radius: 8px;
+}
+
+#score {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: lime;
 }

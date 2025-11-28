@@ -33,9 +33,9 @@ class Player {
 
     updateUI() {
         this.playerElm.style.width = this.width + "px";
-    this.playerElm.style.height = this.height + "px";
-    this.playerElm.style.left = this.positionX + "px";
-    this.playerElm.style.top = this.positionY + "px";
+        this.playerElm.style.height = this.height + "px";
+        this.playerElm.style.left = this.positionX + "px";
+        this.playerElm.style.top = this.positionY + "px";
 
         this.addTrailPoint();
     }
@@ -66,108 +66,107 @@ class Player {
     }
 
     closeTrail() {
-    if (!this.line) return;
+        if (!this.line) return;
 
-    const pointsArray = [];
-    for (let i = 0; i < this.line.points.numberOfItems; i++) {
-        const pt = this.line.points.getItem(i);
-        pointsArray.push({ x: pt.x, y: pt.y });
-    }
-
-    const first = pointsArray[0];
-    const last = pointsArray[pointsArray.length - 1];
-
-    // ¿Qué borde tocamos?
-    let touchedEdge = null;
-    if (last.x <= 0) touchedEdge = "left";
-    else if (last.x >= this.boardWidth) touchedEdge = "right";
-    else if (last.y <= 0) touchedEdge = "top";
-    else if (last.y >= this.boardHeight) touchedEdge = "bottom";
-
-    // Añadir el punto del borde correcto
-    const add = (x, y) => pointsArray.push({ x, y });
-
-    // Seguir borde hasta coincidir con el primer punto
-    switch (touchedEdge) {
-        case "left":
-            add(0, last.y);
-            add(0, first.y);
-            break;
-
-        case "right":
-            add(this.boardWidth, last.y);
-            add(this.boardWidth, first.y);
-            break;
-
-        case "top":
-            add(last.x, 0);
-            add(first.x, 0);
-            break;
-
-        case "bottom":
-            add(last.x, this.boardHeight);
-            add(first.x, this.boardHeight);
-            break;
-    }
-
-    // Cerrar finalmente al primer punto
-    add(first.x, first.y);
-
-    // Crear polígono
-    const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    polygon.setAttribute("stroke", "lime");
-    polygon.setAttribute("stroke-width", "3");
-    polygon.setAttribute("fill", "rgba(0,255,0,0.35)");
-    polygon.setAttribute("points", pointsArray.map(p => `${p.x},${p.y}`).join(" "));
-
-    this.trace.appendChild(polygon);
-    this.checkEnemiesInside(pointsArray);
-    setTimeout(() => polygon.remove(), 200);
-
-    // Resetear línea
-    this.line.remove();
-    this.line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-    this.line.setAttribute("stroke", "lime");
-    this.line.setAttribute("stroke-width", "3");
-    this.line.setAttribute("fill", "none");
-    this.trace.appendChild(this.line);
-
-    this.lastPoint = { x: null, y: null };
-}
-
-isPointInsidePolygon(px, py, polygonPoints) {
-    let inside = false;
-
-    for (let i = 0, j = polygonPoints.length - 1; i < polygonPoints.length; j = i++) {
-        const xi = polygonPoints[i].x, yi = polygonPoints[i].y;
-        const xj = polygonPoints[j].x, yj = polygonPoints[j].y;
-
-        const intersect = ((yi > py) !== (yj > py)) &&
-                          (px < (xj - xi) * (py - yi) / (yj - yi + 0.00001) + xi);
-        if (intersect) inside = !inside;
-    }
-
-    return inside;
-}
-
-checkEnemiesInside(polygonPoints) {
-    obstacleEnemy.forEach((enemy, index) => {
-
-        // Centro del enemigo
-        const ex = enemy.positionX + enemy.width / 2;
-        const ey = enemy.positionY + enemy.height / 2;
-
-        if (this.isPointInsidePolygon(ex, ey, polygonPoints)) {
-            // Eliminar del DOM
-            enemy.obstacleEnemy.remove();
-
-            // Eliminar del array
-            obstacleEnemy.splice(index, 1);
+        const pointsArray = [];
+        for (let i = 0; i < this.line.points.numberOfItems; i++) {
+            const pt = this.line.points.getItem(i);
+            pointsArray.push({ x: pt.x, y: pt.y });
         }
 
-        
-    });
-}
+        const first = pointsArray[0];
+        const last = pointsArray[pointsArray.length - 1];
+
+        // ¿Qué borde tocamos?
+        let touchedEdge = null;
+        if (last.x <= 0) touchedEdge = "left";
+        else if (last.x >= this.boardWidth) touchedEdge = "right";
+        else if (last.y <= 0) touchedEdge = "top";
+        else if (last.y >= this.boardHeight) touchedEdge = "bottom";
+
+        // Añadir el punto del borde correcto
+        const add = (x, y) => pointsArray.push({ x, y });
+
+        // Seguir borde hasta coincidir con el primer punto
+        switch (touchedEdge) {
+            case "left":
+                add(0, last.y);
+                add(0, first.y);
+                break;
+
+            case "right":
+                add(this.boardWidth, last.y);
+                add(this.boardWidth, first.y);
+                break;
+
+            case "top":
+                add(last.x, 0);
+                add(first.x, 0);
+                break;
+
+            case "bottom":
+                add(last.x, this.boardHeight);
+                add(first.x, this.boardHeight);
+                break;
+        }
+
+        // Cerrar finalmente al primer punto
+        add(first.x, first.y);
+
+        // Crear polígono
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("stroke", "lime");
+        polygon.setAttribute("stroke-width", "3");
+        polygon.setAttribute("fill", "rgba(0,255,0,0.35)");
+        polygon.setAttribute("points", pointsArray.map(p => `${p.x},${p.y}`).join(" "));
+
+        this.trace.appendChild(polygon);
+        this.checkEnemiesInside(pointsArray);
+        setTimeout(() => polygon.remove(), 200);
+
+        // Resetear línea
+        this.line.remove();
+        this.line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        this.line.setAttribute("stroke", "lime");
+        this.line.setAttribute("stroke-width", "3");
+        this.line.setAttribute("fill", "none");
+        this.trace.appendChild(this.line);
+
+        this.lastPoint = { x: null, y: null };
+    }
+
+    isPointInsidePolygon(px, py, polygonPoints) {
+        let inside = false;
+
+        for (let i = 0, j = polygonPoints.length - 1; i < polygonPoints.length; j = i++) {
+            const xi = polygonPoints[i].x, yi = polygonPoints[i].y;
+            const xj = polygonPoints[j].x, yj = polygonPoints[j].y;
+
+            const intersect = ((yi > py) !== (yj > py)) &&
+                (px < (xj - xi) * (py - yi) / (yj - yi + 0.00001) + xi);
+            if (intersect) inside = !inside;
+        }
+
+        return inside;
+    }
+
+    checkEnemiesInside(polygonPoints) {
+        obstacleEnemy.forEach((enemy, index) => {
+            const ex = enemy.positionX + enemy.width / 2;
+            const ey = enemy.positionY + enemy.height / 2;
+
+            if (this.isPointInsidePolygon(ex, ey, polygonPoints)) {
+                // eliminar enemigo
+                enemy.obstacleEnemy.remove();
+                obstacleEnemy.splice(index, 1);
+
+                // aumentar score
+                score += 1;
+                scoreElement.textContent = `Score: ${score}`;
+            }
+        });
+    }
+
 
 
 
@@ -249,9 +248,16 @@ class Obstacle {
 const player = new Player();
 const obstacleEnemy = [];
 
-setInterval(() => {
+function spawnEnemy() {
     const newEnemy = new Obstacle()
     obstacleEnemy.push(newEnemy)
+}
+
+
+spawnEnemy() //Generate firt enemy
+
+setInterval(() => {
+    spawnEnemy()
 }, 10000)
 
 setInterval(() => {
@@ -294,3 +300,90 @@ toggleBtn.addEventListener("click", () => {
         toggleBtn.textContent = "🔊 Música";
     }
 });
+
+
+//Score
+
+let score = 0; // puntaje inicial
+const scoreElement = document.getElementById("score");
+
+//gameOver
+
+function gameOver() {
+    // Mostrar pantalla
+    document.getElementById("gameOver").style.display = "block";
+
+    // Detener enemigos
+    clearInterval(enemyInterval);
+
+    // Opcional: desactivar controles
+    document.removeEventListener('keydown', playerKeyHandler);
+}
+
+//colisionPlayer
+function isColliding(enemy) {
+    const px = player.positionX;
+    const py = player.positionY;
+    const pw = player.width;
+    const ph = player.height;
+
+    const ex = enemy.positionX;
+    const ey = enemy.positionY;
+    const ew = enemy.width;
+    const eh = enemy.height;
+
+    return px < ex + ew &&
+        px + pw > ex &&
+        py < ey + eh &&
+        py + ph > ey;
+}
+
+//colisionLinea
+
+function isEnemyTouchingLine(enemy) {
+    const cx = enemy.positionX + enemy.width / 2;
+    const cy = enemy.positionY + enemy.height / 2;
+
+    const linePoints = [];
+    for (let i = 0; i < player.line.points.numberOfItems; i++) {
+        linePoints.push(player.line.points.getItem(i));
+    }
+
+    for (let i = 0; i < linePoints.length - 1; i++) {
+        const x1 = linePoints[i].x;
+        const y1 = linePoints[i].y;
+        const x2 = linePoints[i + 1].x;
+        const y2 = linePoints[i + 1].y;
+
+        // Distancia punto a segmento
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const t = Math.max(0, Math.min(1, ((cx - x1) * dx + (cy - y1) * dy) / (dx * dx + dy * dy)));
+        const nearestX = x1 + t * dx;
+        const nearestY = y1 + t * dy;
+
+        const distSq = (cx - nearestX) ** 2 + (cy - nearestY) ** 2;
+        if (distSq <= (enemy.width / 2) ** 2) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+//colisionesenemigos
+
+const enemyInterval = setInterval(() => {
+    obstacleEnemy.forEach((enemy, index) => {
+        enemy.move();
+
+        // Colisión con player
+        if (isColliding(enemy) || isEnemyTouchingLine(enemy)) {
+            gameOver();
+        }
+    });
+}, 50);
+
+
+

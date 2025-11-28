@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Game 2025</title>
+
+    <link rel="stylesheet" href="./css/main.css">
+</head>
+
+<body>
+    <h1>The Matrix has you...</h1>
+
+
+    <div id="board">
+        <div id="player">
+            <img src="./images/the_matrix_reloaded_4k_34.jpeg" alt="player-image">
+        </div>
+        <svg id="trace" width="800" height="600"></svg>
+    </div>
+
+    <div id="score">Score: 0</div>
+
+    <button id="toggleMusic">Música</button>
+
+<audio id="bgMusic" src="./audio/rock_is_dead.mp3" loop></audio>
+
+
+<div id="gameOver" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; 
+     background:rgba(0,0,0,0.8); color:chartreuse; font-size:48px; text-align:center; line-height:600px; z-index:1000;">
+    "¿Oye eso, señor Anderson? Es el sonido de lo inevitable"
+</div>
+
+
+
+    <script src="./js/main.js"></script>
+</body>
+
+</html>
